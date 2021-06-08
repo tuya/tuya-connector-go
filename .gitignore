@@ -12,4 +12,18 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+main
+
+logs
+connector/token/logs
+connector/sign/logs
+connector/logger/logs
+connector/header/logs
+connector/message/logs
+connector/httplib/logs
+connector/env/logs
+connector/error_proc/logs
+
+*.log
