@@ -8,7 +8,6 @@ import (
 	"github.com/tuya/tuya-connector-go/connector/logger"
 	"github.com/tuya/tuya-connector-go/example/model"
 	"io/ioutil"
-	"net/http"
 )
 
 type Response map[string]interface{}
@@ -23,9 +22,8 @@ func (d *DeviceError) Process(ctx context.Context, code int, msg string) {
 func GetDevice(c *gin.Context) {
 	device_id := c.Param("device_id")
 	resp := &model.GetDeviceResponse{}
-	err := connector.MakeRequest(
+	err := connector.MakeGetRequest(
 		context.Background(),
-		connector.WithMethod(http.MethodGet),
 		connector.WithAPIUri(fmt.Sprintf("/v1.0/devices/%s", device_id)),
 		connector.WithResp(resp),
 		connector.WithErrProc(1102, &DeviceError{}))
@@ -41,9 +39,8 @@ func PutDevice(c *gin.Context) {
 	device_id := c.Param("device_id")
 	body, _ := ioutil.ReadAll(c.Request.Body)
 	resp := &Response{}
-	err := connector.MakeRequest(
+	err := connector.MakePutRequest(
 		context.Background(),
-		connector.WithMethod(http.MethodPut),
 		connector.WithAPIUri(fmt.Sprintf("/v1.0/devices/%s", device_id)),
 		connector.WithPayload(body),
 		connector.WithResp(resp))
@@ -59,9 +56,8 @@ func PostDeviceCmd(c *gin.Context) {
 	device_id := c.Param("device_id")
 	body, _ := ioutil.ReadAll(c.Request.Body)
 	resp := &model.PostDeviceCmdResponse{}
-	err := connector.MakeRequest(
+	err := connector.MakePostRequest(
 		context.Background(),
-		connector.WithMethod(http.MethodPost),
 		connector.WithAPIUri(fmt.Sprintf("/v1.0/devices/%s/commands", device_id)),
 		connector.WithPayload(body),
 		connector.WithResp(resp))
@@ -77,9 +73,8 @@ func GetDeviceFunc(c *gin.Context) {
 	device_id := c.Param("device_id")
 	body, _ := ioutil.ReadAll(c.Request.Body)
 	resp := &Response{}
-	err := connector.MakeRequest(
+	err := connector.MakeGetRequest(
 		context.Background(),
-		connector.WithMethod(http.MethodGet),
 		connector.WithAPIUri(fmt.Sprintf("/v1.0/devices/%s/functions", device_id)),
 		connector.WithPayload(body),
 		connector.WithResp(resp))

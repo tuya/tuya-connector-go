@@ -10,6 +10,7 @@ import (
 	"github.com/tuya/tuya-connector-go/connector/message"
 	"github.com/tuya/tuya-connector-go/connector/sign"
 	"github.com/tuya/tuya-connector-go/connector/token"
+	"net/http"
 )
 
 type ParamFunc func(v *httplib.ProxyHttp)
@@ -43,7 +44,7 @@ func InitWithOptions(opts ...env.OptionFunc) {
 }
 
 // make request api
-func MakeRequest(ctx context.Context, params ...ParamFunc) error {
+func makeRequest(ctx context.Context, params ...ParamFunc) error {
 	defer func() {
 		if v := recover(); v != nil {
 			logger.Log.Errorf("unknown error, err=%+v", v)
@@ -61,13 +62,49 @@ func MakeRequest(ctx context.Context, params ...ParamFunc) error {
 	return ph.DoRequest(ctx)
 }
 
+// GET
+func MakeGetRequest(ctx context.Context, params ...ParamFunc) error {
+	params = append(params, withMethod(http.MethodGet))
+	return makeRequest(ctx, params...)
+}
+
+// POST
+func MakePostRequest(ctx context.Context, params ...ParamFunc) error {
+	params = append(params, withMethod(http.MethodPost))
+	return makeRequest(ctx, params...)
+}
+
+// PUT
+func MakePutRequest(ctx context.Context, params ...ParamFunc) error {
+	params = append(params, withMethod(http.MethodPut))
+	return makeRequest(ctx, params...)
+}
+
+// DELETE
+func MakeDeleteRequest(ctx context.Context, params ...ParamFunc) error {
+	params = append(params, withMethod(http.MethodDelete))
+	return makeRequest(ctx, params...)
+}
+
+// PATCH
+func MakePatchRequest(ctx context.Context, params ...ParamFunc) error {
+	params = append(params, withMethod(http.MethodPatch))
+	return makeRequest(ctx, params...)
+}
+
+// HEAD
+func MakeHeadRequest(ctx context.Context, params ...ParamFunc) error {
+	params = append(params, withMethod(http.MethodHead))
+	return makeRequest(ctx, params...)
+}
+
 func WithHeader(h map[string]string) ParamFunc {
 	return func(v *httplib.ProxyHttp) {
 		v.SetHeader(h)
 	}
 }
 
-func WithMethod(method string) ParamFunc {
+func withMethod(method string) ParamFunc {
 	return func(v *httplib.ProxyHttp) {
 		v.SetMethod(method)
 	}
