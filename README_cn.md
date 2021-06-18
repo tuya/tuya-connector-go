@@ -87,9 +87,8 @@ func GetDevice(c *gin.Context) {
    device_id := c.Param("device_id")
    resp := &GetDeviceResponse{}
    // 发起API请求
-   err := connector.MakeRequest(
+   err := connector.MakeGetRequest(
       context.Background(),
-      connector.WithMethod(http.MethodGet),
       connector.WithAPIUri(fmt.Sprintf("/v1.0/devices/%s", device_id)),
       connector.WithResp(resp))
    if err != nil {
@@ -126,9 +125,8 @@ func (d *DeviceError) Process(ctx context.Context, code int, msg string) {
 func GetDevice(c *gin.Context) {
    device_id := c.Param("device_id")
    resp := new(map[string]interface{})
-   err := connector.MakeRequest(
+   err := connector.MakeGetRequest(
       context.Background(),
-      connector.WithMethod(http.MethodGet),
       connector.WithAPIUri(fmt.Sprintf("/v1.0/devices/%s", device_id)),
       connector.WithResp(resp),
       // 设置错误码自定义事件处理
