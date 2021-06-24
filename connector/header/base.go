@@ -2,6 +2,7 @@ package header
 
 import (
 	"context"
+	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
 	"github.com/tuya/tuya-connector-go/connector/logger"
 	"github.com/tuya/tuya-connector-go/connector/sign"
@@ -15,10 +16,6 @@ type IHeader interface {
 }
 
 type headerWrapper struct {
-	ak    string
-	sk    string
-	token string
-	ts    string
 }
 
 var Handler IHeader
@@ -32,23 +29,25 @@ func NewHeaderWrapper() IHeader {
 
 func (t *headerWrapper) GetHeader(ctx context.Context) map[string]string {
 	m := make(map[string]string)
-	m["Content-Type"] = "application/json"
-	m["sign_method"] = "HMAC-SHA256"
-	m["client_id"] = env.Config.GetAccessID()
-
+	m[constant.Header_ContentType] = constant.ContentType_JSON
+	m[constant.Header_SignMethod] = constant.SignMethod_HMAC
+	m[constant.Header_ClientID] = env.Config.GetAccessID()
+	nonce := utils.GetUUID()
+	m[constant.Header_Nonce] = nonce
 	var token, err = token.Handler.GetToken(ctx)
 	if err != nil {
 		logger.Log.Errorf("[GetHeader] get token err: %s", err.Error())
 		return nil
 	}
-	m["access_token"] = token
+	m[constant.Header_AccessToken] = token
 
 	ts := utils.IntToStr(utils.Microstamp())
-	m["t"] = ts
+	m[constant.Header_TimeStamp] = ts
 
-	ctx = context.WithValue(ctx, sign.TOKEN, token)
-	ctx = context.WithValue(ctx, sign.TS, ts)
+	ctx = context.WithValue(ctx, constant.TOKEN, token)
+	ctx = context.WithValue(ctx, constant.TS, ts)
+	ctx = context.WithValue(ctx, constant.NONCE, nonce)
 	signStr := sign.Handler.GetSign(ctx)
-	m["sign"] = signStr
+	m[constant.Header_Sign] = signStr
 	return m
 }

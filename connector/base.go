@@ -2,6 +2,7 @@ package connector
 
 import (
 	"context"
+	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
 	"github.com/tuya/tuya-connector-go/connector/error_proc"
 	"github.com/tuya/tuya-connector-go/connector/header"
@@ -13,7 +14,7 @@ import (
 	"net/http"
 )
 
-type ParamFunc func(v *httplib.ProxyHttp)
+type ParamFunc func(*httplib.ProxyHttp)
 
 // init env config
 // init handler
@@ -54,10 +55,9 @@ func makeRequest(ctx context.Context, params ...ParamFunc) error {
 	for _, p := range params {
 		p(ph)
 	}
+	ctx = context.WithValue(ctx, constant.REQ_INFO, ph.GetReqHandler())
 	// set header
-	if ph.GetProxyHeader() == nil {
-		ph.SetHeader(header.Handler.GetHeader(ctx))
-	}
+	ph.SetHeader(header.Handler.GetHeader(ctx))
 	//get req
 	return ph.DoRequest(ctx)
 }

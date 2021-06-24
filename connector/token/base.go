@@ -2,6 +2,7 @@ package token
 
 import (
 	"context"
+	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
 	"sync"
 	"time"
@@ -40,13 +41,18 @@ func (t *token) GetToken(ctx context.Context) (string, error) {
 	if tk != "" && ttl.After(time.Now()) {
 		return tk, nil
 	}
+	tokenCtx := context.Background()
+	exeCnt := ctx.Value(constant.ExeCount)
+	if exeCnt != nil && exeCnt.(int) > 0 {
+		tokenCtx = context.WithValue(tokenCtx, constant.ExeCount, exeCnt)
+	}
 	if tk == "" || t.reToken == "" {
-		_, err := t.fromAPIGetToken(ctx)
+		_, err := t.fromAPIGetToken(tokenCtx)
 		if err != nil {
 			return "", err
 		}
 	} else {
-		_, err := t.fromAPIRefreshToken(ctx)
+		_, err := t.fromAPIRefreshToken(tokenCtx)
 		if err != nil {
 			return "", err
 		}

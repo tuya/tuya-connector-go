@@ -5,9 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/error_proc"
 	"github.com/tuya/tuya-connector-go/connector/logger"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -26,6 +26,7 @@ type ProxyHttp struct {
 
 func NewProxyHttp() *ProxyHttp {
 	return &ProxyHttp{
+		header: make(map[string]string),
 		req: &http.Request{
 			Header: make(http.Header),
 		},
@@ -34,9 +35,9 @@ func NewProxyHttp() *ProxyHttp {
 }
 
 func (t *ProxyHttp) SetHeader(h map[string]string) {
-	t.header = h
 	for k, v := range h {
-		t.req.Header.Add(k, v)
+		t.req.Header.Set(k, v)
+		t.header[k] = v
 	}
 }
 
@@ -56,12 +57,7 @@ func (t *ProxyHttp) SetAPIUri(v string) {
 
 func (t *ProxyHttp) SetPayload(v []byte) {
 	t.payload = v
-	var p io.Reader = bytes.NewReader(v)
-	rc, ok := p.(io.ReadCloser)
-	if !ok && p != nil {
-		rc = io.NopCloser(p)
-	}
-	t.req.Body = rc
+	t.req.Body = ioutil.NopCloser(bytes.NewBuffer(v))
 }
 
 func (t *ProxyHttp) SetResp(v interface{}) {
@@ -103,11 +99,11 @@ func (t *ProxyHttp) DoRequest(ctx context.Context) error {
 		logger.Log.Errorf("[ProxyHttp] do req failed req:%v, resp:%v", t.req, string(bs))
 		if f, ok := t.errMap[rst.Code]; ok {
 			// avoid loop
-			exeCnt := ctx.Value("exeCnt")
+			exeCnt := ctx.Value(constant.ExeCount)
 			if exeCnt != nil && exeCnt.(int) > 0 {
 				return errors.New(rst.Msg)
 			}
-			ctx = context.WithValue(ctx, "exeCnt", 1)
+			ctx = context.WithValue(ctx, constant.ExeCount, 1)
 			f.Process(ctx, rst.Code, rst.Msg)
 			return errors.New(rst.Msg)
 		}

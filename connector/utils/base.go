@@ -9,6 +9,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
+	uuid "github.com/satori/go.uuid"
 	"math/rand"
 	"strconv"
 	"time"
@@ -134,4 +135,15 @@ func StrToMD5(t string) string {
 	h := md5.New()
 	h.Write([]byte(t))
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+func GetUUID() string {
+	u2 := uuid.NewV4()
+	return u2.String()
+}
+
+func GetSha256(data []byte) string {
+	sha256Contain := sha256.New()
+	sha256Contain.Write(data)
+	return hex.EncodeToString(sha256Contain.Sum(nil))
 }

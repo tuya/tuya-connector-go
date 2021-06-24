@@ -3,6 +3,7 @@ package token
 import (
 	"context"
 	"fmt"
+	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
 	"github.com/tuya/tuya-connector-go/connector/error_proc"
 	"github.com/tuya/tuya-connector-go/connector/httplib"
@@ -48,15 +49,19 @@ func (t *token) commonReqToken(ctx context.Context, uri string) (*tokenAPIRespon
 	th.SetResp(resp)
 	th.SetErrProc(error_proc.TOKEN_EXPIRED, &tokenError{})
 	ts := utils.IntToStr(utils.Microstamp())
-	ctx = context.WithValue(ctx, sign.TOKEN, "")
-	ctx = context.WithValue(ctx, sign.TS, ts)
+	nonce := utils.GetUUID()
+	ctx = context.WithValue(ctx, constant.REQ_INFO, th.GetReqHandler())
+	ctx = context.WithValue(ctx, constant.TOKEN, "")
+	ctx = context.WithValue(ctx, constant.TS, ts)
+	ctx = context.WithValue(ctx, constant.NONCE, nonce)
 	signStr := sign.Handler.GetSign(ctx)
 	th.SetHeader(map[string]string{
-		"Content-Type": "application/json",
-		"sign_method":  "HMAC-SHA256",
-		"client_id":    env.Config.GetAccessID(),
-		"t":            ts,
-		"sign":         signStr,
+		constant.Header_ContentType: constant.ContentType_JSON,
+		constant.Header_SignMethod:  constant.SignMethod_HMAC,
+		constant.Header_ClientID:    env.Config.GetAccessID(),
+		constant.Header_TimeStamp:   ts,
+		constant.Header_Sign:        signStr,
+		constant.Header_Nonce:       nonce,
 	})
 	err := th.DoRequest(ctx)
 	if err != nil {
