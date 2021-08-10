@@ -23,7 +23,11 @@ const (
 	Header_Sign        = "sign"
 	Header_Nonce       = "nonce"
 	Header_AccessToken = "access_token"
+	Header_DevChannel  = "Dev_channel"
+	Header_DevLang     = "Dev_lang"
 
 	ContentType_JSON = "application/json"
 	SignMethod_HMAC  = "HMAC-SHA256"
+	Dev_Channel      = "SaaSFramework"
+	Dev_Lang         = "golang"
 )

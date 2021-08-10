@@ -31,6 +31,8 @@ func (t *headerWrapper) GetHeader(ctx context.Context) map[string]string {
 	m := make(map[string]string)
 	m[constant.Header_ContentType] = constant.ContentType_JSON
 	m[constant.Header_SignMethod] = constant.SignMethod_HMAC
+	m[constant.Header_DevChannel] = constant.Dev_Channel
+	m[constant.Header_DevLang] = constant.Dev_Lang
 	m[constant.Header_ClientID] = env.Config.GetAccessID()
 	nonce := utils.GetUUID()
 	m[constant.Header_Nonce] = nonce
