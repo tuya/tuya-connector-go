@@ -24,6 +24,7 @@ func (c *client) receiveMsg() messageFunc {
 			logger.Log.Errorf("json unmarshal failed, err=%s", err.Error())
 			return
 		}
+		protocol := int64(m["protocol"].(float64))
 		bs := m["data"].(string)
 		de, err := base64.StdEncoding.DecodeString(bs)
 		if err != nil {
@@ -36,14 +37,37 @@ func (c *client) receiveMsg() messageFunc {
 			logger.Log.Errorf("de json unmarshal failed, err=%s", err.Error())
 			return
 		}
-		if code, ok := m["bizCode"]; ok {
+		if protocol == event.PROTOCOL_STATUS {
 			c.mu.RLock()
-			f, ok := c.eventSubPool[event.GetMessageNameByType(code.(string))]
+			f, ok := c.eventSubPool[event.STATUS_REPORT_MESSAGE]
 			c.mu.RUnlock()
 			if !ok {
 				return
 			}
-			c.switchCode(code.(string), deData, f)
+			fv := reflect.ValueOf(f)
+			if fv.Kind() != reflect.Func {
+				return
+			}
+			m := &event.StatusReportMessage{}
+			err := json.Unmarshal(deData, &m)
+			if err != nil {
+				logger.Log.Errorf("protocol %d json unmarshal failed, err=%s", protocol, err.Error())
+			}
+			params := []reflect.Value{reflect.ValueOf(m)}
+			fv.Call(params)
+			return
+		} else if protocol == event.PROTOCOL_DEVICE {
+			if code, ok := m["bizCode"]; ok {
+				c.mu.RLock()
+				f, ok := c.eventSubPool[event.GetMessageNameByType(code.(string))]
+				c.mu.RUnlock()
+				if !ok {
+					return
+				}
+				c.switchCode(code.(string), deData, f)
+			}
+		} else {
+			logger.Log.Warnf("please contact tuya technical support, protocol=%d", protocol)
 		}
 		return
 	}

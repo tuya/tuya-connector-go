@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
-	"github.com/tuya/tuya-connector-go/connector/error_proc"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/httplib"
 	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/sign"
 	"github.com/tuya/tuya-connector-go/connector/utils"
 	"net/http"
 )
@@ -47,14 +46,14 @@ func (t *token) commonReqToken(ctx context.Context, uri string) (*tokenAPIRespon
 	th.SetMethod(http.MethodGet)
 	th.SetAPIUri(env.Config.GetApiHost() + uri)
 	th.SetResp(resp)
-	th.SetErrProc(error_proc.TOKEN_EXPIRED, &tokenError{})
+	th.SetErrProc(constant.TOKEN_EXPIRED, &tokenError{})
 	ts := utils.IntToStr(utils.Microstamp())
 	nonce := utils.GetUUID()
 	ctx = context.WithValue(ctx, constant.REQ_INFO, th.GetReqHandler())
 	ctx = context.WithValue(ctx, constant.TOKEN, "")
 	ctx = context.WithValue(ctx, constant.TS, ts)
 	ctx = context.WithValue(ctx, constant.NONCE, nonce)
-	signStr := sign.Handler.GetSign(ctx)
+	signStr := extension.GetSign(constant.TUYA_SIGN).Sign(ctx)
 	th.SetHeader(map[string]string{
 		constant.Header_ContentType: constant.ContentType_JSON,
 		constant.Header_SignMethod:  constant.SignMethod_HMAC,
@@ -76,7 +75,7 @@ type tokenError struct {
 }
 
 func (t *tokenError) Process(ctx context.Context, code int, msg string) {
-	if code == error_proc.TOKEN_EXPIRED {
-		_, _ = Handler.GetRefreshToken(ctx)
+	if code == constant.TOKEN_EXPIRED {
+		_, _ = extension.GetToken(constant.TUYA_TOKEN).GetRefreshToken(ctx)
 	}
 }

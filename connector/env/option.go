@@ -42,38 +42,3 @@ func WithDebugMode(v bool) OptionFunc {
 		e.isDebug = v
 	}
 }
-
-// set custom log wrapper
-func WithLogWrapper(v interface{}) OptionFunc {
-	return func(e *environment) {
-		e.logHandler = v
-	}
-}
-
-// set custom token wrapper
-func WithTokenWrapper(v interface{}) OptionFunc {
-	return func(e *environment) {
-		e.tokenHandler = v
-	}
-}
-
-// set custom sign wrapper
-func WithSignWrapper(v interface{}) OptionFunc {
-	return func(e *environment) {
-		e.signHandler = v
-	}
-}
-
-// set custom header wrapper
-func WithHeaderWrapper(v interface{}) OptionFunc {
-	return func(e *environment) {
-		e.headerHandler = v
-	}
-}
-
-// set custom event message wrapper
-func WithEventMsgWrapper(v interface{}) OptionFunc {
-	return func(e *environment) {
-		e.eventHandler = v
-	}
-}

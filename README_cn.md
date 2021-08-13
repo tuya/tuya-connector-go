@@ -50,7 +50,7 @@ func watitSignal() {
    for {
       select {
       case c := <-quitCh:
-         message.Handler.Stop()
+         extension.GetMessage(constant.TUYA_MESSAGE).Stop()
          logger.Log.Infof("receive sig:%v, shutdown the http server...", c.String())
          return
       }
@@ -145,14 +145,14 @@ func GetDevice(c *gin.Context) {
 ```go
 func Listener() {
    // 初始化消息队列客户端 
-   message.Handler.InitMessageClient()
+   extension.GetMessage(constant.TUYA_MESSAGE).InitMessageClient()
    // 订阅设备修改名称消息事件
-   message.Handler.SubEventMessage(func(m *event.NameUpdateMessage) {
+   extension.GetMessage(constant.TUYA_MESSAGE).SubEventMessage(func(m *event.NameUpdateMessage) {
       logger.Log.Info("=========== name update： ==========")
       logger.Log.Info(m)
    })
    // 订阅设备数据上报消息事件
-   message.Handler.SubEventMessage(func(m *event.StatusReportMessage) {
+   extension.GetMessage(constant.TUYA_MESSAGE).SubEventMessage(func(m *event.StatusReportMessage) {
       logger.Log.Info("=========== report data： ==========")
       for _, v := range m.Status {
          logger.Log.Infof(v.Code, v.Value)
@@ -168,20 +168,12 @@ func Listener() {
    当请求OpenAPI后的响应结果返回错误码时，可以通过自定义实现`IError`的struct来针对不同的错误码进行相应的处理。<br/>
 
 
-- ILog接口
-
-   框架提供支持自定义实现ILog的日志struct来个性化打印，服务初始化时将对象注入到底层框架。<br />
-
-   > ```
-   > connector.InitWithOptions(env.WithLogWrapper(CustomLog))
-   > ```
-
 - IToken接口
 
    支持自定义实现IToken的token struct，管理token生命周期，获取或刷新token，token信息本地缓存，服务初始化时将对象注入到底层框架。<br />
 
    > ```
-   > connector.InitWithOptions(env.WithTokenWrapper(CustomToken))
+   > extension.GetToken(constant.CUSTOM_TOKEN)
    > ```
 
 
@@ -190,7 +182,7 @@ func Listener() {
    支持自定义header struct，请求涂鸦云OpenAPI时可自定义处理逻辑，包括需要添加的属性值以及签名，服务初始化时将对象注入到底层框架。<br />
 
    > ```
-   > connector.InitWithOptions(env.WithHeaderWrapper(CustomHeader))
+   > extension.GetHeader(constant.CUSTOM_HEADER)
    > ```
 
 - ISign接口
@@ -198,7 +190,7 @@ func Listener() {
    实现ISign接口可自定义签名逻辑，服务初始化时将对象注入到底层框架。<br />
 
    > ```
-   > connector.InitWithOptions(env.WithSignWrapper(CustomSign))
+   > extension.GetSign(constant.CUSTOM_SIGN)
    > ```
 
 - IEventMessage接口
@@ -206,7 +198,7 @@ func Listener() {
    支持自定义消息事件订阅，不同消息队列连接方式、接收消息、数据解密可能会有所不同，此时需要自定义实现消息订阅逻辑。服务初始化时将对象注入到底层框架。<br />
 
    > ```
-   > connector.InitWithOptions(env.WithEventMsgWrapper(CustomEventMessage))
+   > extension.GetMessage(constant.CUSTOM_MESSAGE)
    > ```
 
 ### 消息订阅

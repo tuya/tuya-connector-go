@@ -2,8 +2,9 @@ package main
 
 import (
 	"github.com/tuya/tuya-connector-go/connector"
+	"github.com/tuya/tuya-connector-go/connector/constant"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/message"
 	"github.com/tuya/tuya-connector-go/example/messaging"
 	"github.com/tuya/tuya-connector-go/example/router"
 	"os"
@@ -18,12 +19,7 @@ func main() {
 	env.WithAccessID(""),
 	env.WithAccessKey(""),
 	env.WithAppName(""),
-	env.WithDebugMode(true),
-	env.WithLogWrapper(nil),
-	env.WithHeaderWrapper(nil),
-	env.WithTokenWrapper(nil),
-	env.WithSignWrapper(nil),
-	env.WithEventMsgWrapper(nil))*/
+	env.WithDebugMode(true))*/
 
 	// default init config
 	connector.InitWithOptions()
@@ -41,7 +37,7 @@ func watitSignal() {
 	for {
 		select {
 		case c := <-quitCh:
-			message.Handler.Stop()
+			extension.GetMessage(constant.TUYA_MESSAGE).Stop()
 			logger.Log.Infof("receive sig:%v, shutdown the http server...", c.String())
 			return
 		}

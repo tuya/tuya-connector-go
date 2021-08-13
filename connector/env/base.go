@@ -30,16 +30,6 @@ type environment struct {
 	appName   string
 	// if true, debug mod
 	isDebug bool
-	// support custom sign handler
-	signHandler interface{}
-	// support custom token handler
-	tokenHandler interface{}
-	// support custom log handler
-	logHandler interface{}
-	// support custom header handler
-	headerHandler interface{}
-	// support custom event message handler
-	eventHandler interface{}
 }
 
 func NewEnv() *environment {
@@ -106,24 +96,4 @@ func (env *environment) GetAppName() string {
 
 func (env *environment) DebugMode() bool {
 	return env.isDebug
-}
-
-func (env *environment) GetLogHandler() interface{} {
-	return env.logHandler
-}
-
-func (env *environment) GetSignHandler() interface{} {
-	return env.signHandler
-}
-
-func (env *environment) GetTokenHandler() interface{} {
-	return env.tokenHandler
-}
-
-func (env *environment) GetHeaderHandler() interface{} {
-	return env.headerHandler
-}
-
-func (env *environment) GetEventMsgHandler() interface{} {
-	return env.eventHandler
 }

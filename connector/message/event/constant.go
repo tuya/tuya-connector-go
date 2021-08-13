@@ -72,3 +72,8 @@ const (
 	AUTOMATION_EXTERNAL_ACTION_MESSAGE = "AutomationExternalActionMessage"
 	SCENE_EXECUTE_MESSAGE              = "SceneExecuteMessage"
 )
+
+const (
+	PROTOCOL_STATUS = 4
+	PROTOCOL_DEVICE = 20
+)

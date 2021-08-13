@@ -2,20 +2,21 @@ package token
 
 import (
 	"context"
+	"fmt"
 	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"sync"
 	"time"
 )
 
-// token interface
-// implemented this interface and supports custom token manage
-type IToken interface {
-	GetToken(ctx context.Context) (string, error)
-	GetRefreshToken(ctx context.Context) (string, error)
+func init() {
+	extension.SetToken(constant.TUYA_TOKEN, newTokenInstance)
+	fmt.Println("init token extension......")
 }
 
-var Handler IToken
+func newTokenInstance() extension.IToken {
+	return NewTokenWrapper()
+}
 
 type token struct {
 	mu       *sync.RWMutex
@@ -24,10 +25,7 @@ type token struct {
 	expireAt time.Time
 }
 
-func NewTokenWrapper() IToken {
-	if env.Config.GetTokenHandler() != nil {
-		return env.Config.GetTokenHandler().(IToken)
-	}
+func NewTokenWrapper() extension.IToken {
 	return &token{
 		mu: &sync.RWMutex{},
 	}

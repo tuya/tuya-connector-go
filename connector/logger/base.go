@@ -3,7 +3,8 @@ package logger
 import (
 	"bytes"
 	"fmt"
-	"github.com/tuya/tuya-connector-go/connector/env"
+	"github.com/tuya/tuya-connector-go/connector/constant"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/utils"
 	"log"
 	"os"
@@ -15,21 +16,16 @@ import (
 	"time"
 )
 
-// log
-type ILogger interface {
-	Debug(v ...interface{})
-	Debugf(format string, v ...interface{})
-	Info(v ...interface{})
-	Infof(format string, v ...interface{})
-	Warn(v ...interface{})
-	Warnf(format string, v ...interface{})
-	Error(v ...interface{})
-	Errorf(format string, v ...interface{})
-	Fatal(v ...interface{})
-	Fatalf(format string, v ...interface{})
+func init() {
+	extension.SetLog(constant.TUYA_LOG, newLogInstance)
+	fmt.Println("init log extension......")
 }
 
-var Log ILogger
+func newLogInstance() extension.ILogger {
+	return NewDefaultLogger("tysdk", true)
+}
+
+var Log extension.ILogger
 
 type TyLogger struct {
 	log          *RollingFile
@@ -37,14 +33,11 @@ type TyLogger struct {
 	logLevel     int
 }
 
-func NewDefaultLogger(appName string, isDebug bool) ILogger {
-	if env.Config.GetLogHandler() != nil {
-		return env.Config.GetLogHandler().(ILogger)
-	}
+func NewDefaultLogger(appName string, isDebug bool) extension.ILogger {
 	return NewLogger(appName, 10, MB, isDebug)
 }
 
-func NewLogger(appName string, maxFileSize int64, fileSizeUnit UNIT, isDebug bool) ILogger {
+func NewLogger(appName string, maxFileSize int64, fileSizeUnit UNIT, isDebug bool) extension.ILogger {
 	tyLog := &TyLogger{
 		consolePrint: isDebug,
 		logLevel:     INFO,
@@ -67,7 +60,12 @@ func NewLogger(appName string, maxFileSize int64, fileSizeUnit UNIT, isDebug boo
 	}
 	lf.filesize = fi.Size()
 	tyLog.log = lf
+	Log = tyLog
 	return tyLog
+}
+
+func (t *TyLogger) SetLevel(level int) {
+	t.logLevel = level
 }
 
 func (t *TyLogger) ConsolePrint(msg string) {

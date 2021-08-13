@@ -31,3 +31,23 @@ const (
 	Dev_Channel      = "SaaSFramework"
 	Dev_Lang         = "golang"
 )
+
+const (
+	TUYA_HEADER     = "tuya_header"
+	TUYA_SIGN       = "tuya_sign"
+	TUYA_LOG        = "tuya_log"
+	TUYA_TOKEN      = "tuya_token"
+	TUYA_MESSAGE    = "tuya_message"
+	TUYA_ERROR_PROC = "tuya_error_proc"
+)
+
+const (
+	// system error,please contact the admin
+	SYSTEM_ERROR = 500
+	// data not exist
+	DATA_NOT_EXIST = 1000
+	// secret invalid
+	SECRET_INVALID = 1001
+	// token is expired
+	TOKEN_EXPIRED = 1010
+)

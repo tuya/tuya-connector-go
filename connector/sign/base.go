@@ -3,8 +3,10 @@ package sign
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/logger"
 	"github.com/tuya/tuya-connector-go/connector/utils"
 	"io/ioutil"
@@ -14,40 +16,33 @@ import (
 	"strings"
 )
 
-// sign interface
-// implemented this interface and supports custom signatures
-type ISign interface {
-	GetSign(ctx context.Context) string
+func init() {
+	extension.SetSign(constant.TUYA_SIGN, newSignInstance)
+	fmt.Println("init sign extension......")
+}
+
+func newSignInstance() extension.ISign {
+	return NewSignWrapper()
 }
 
 type signWrapper struct {
-	ak           string
-	sk           string
 	token        string
 	ts           string
 	nonce        string
 	stringToSign string
 }
 
-var Handler ISign
-
-func NewSignWrapper() ISign {
-	if env.Config.GetSignHandler() != nil {
-		return env.Config.GetSignHandler().(ISign)
-	}
-	return &signWrapper{
-		ak: env.Config.GetAccessID(),
-		sk: env.Config.GetAccessKey(),
-	}
+func NewSignWrapper() extension.ISign {
+	return &signWrapper{}
 }
 
 // No need to pass the token parameter when getting the token
-func (t *signWrapper) GetSign(ctx context.Context) string {
+func (t *signWrapper) Sign(ctx context.Context) string {
 	t.token = ctx.Value(constant.TOKEN).(string)
 	t.ts = ctx.Value(constant.TS).(string)
 	t.nonce = ctx.Value(constant.NONCE).(string)
 	t.stringToSign = t.calStringToSign(ctx)
-	sign := utils.HS256Sign(t.sk, t.ak+t.token+t.ts+t.nonce+t.stringToSign)
+	sign := utils.HS256Sign(env.Config.GetAccessKey(), env.Config.GetAccessID()+t.token+t.ts+t.nonce+t.stringToSign)
 	return strings.ToUpper(sign)
 }
 

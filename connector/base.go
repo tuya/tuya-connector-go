@@ -1,16 +1,18 @@
 package connector
 
 import (
+	_ "github.com/tuya/tuya-connector-go/connector/header"
+	_ "github.com/tuya/tuya-connector-go/connector/logger"
+	_ "github.com/tuya/tuya-connector-go/connector/message"
+	_ "github.com/tuya/tuya-connector-go/connector/sign"
+	_ "github.com/tuya/tuya-connector-go/connector/token"
+
 	"context"
 	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
-	"github.com/tuya/tuya-connector-go/connector/error_proc"
-	"github.com/tuya/tuya-connector-go/connector/header"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/httplib"
 	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/message"
-	"github.com/tuya/tuya-connector-go/connector/sign"
-	"github.com/tuya/tuya-connector-go/connector/token"
 	"net/http"
 )
 
@@ -24,22 +26,8 @@ func InitWithOptions(opts ...env.OptionFunc) {
 		v(env.Config)
 	}
 	env.Config.Init()
-	//if the sign handle is nil, use default handle
-	if sign.Handler == nil {
-		sign.Handler = sign.NewSignWrapper()
-	}
-	// check log whether create
-	if logger.Log == nil {
-		logger.Log = logger.NewDefaultLogger(env.Config.GetAppName(), env.Config.DebugMode())
-	}
-	if token.Handler == nil {
-		token.Handler = token.NewTokenWrapper()
-	}
-	if header.Handler == nil {
-		header.Handler = header.NewHeaderWrapper()
-	}
-	if message.Handler == nil {
-		message.Handler = message.NewEventMsgWrapper()
+	if !env.Config.DebugMode() {
+		logger.Log.SetLevel(logger.INFO)
 	}
 	logger.Log.Info("### iot core init success ###")
 }
@@ -57,7 +45,7 @@ func makeRequest(ctx context.Context, params ...ParamFunc) error {
 	}
 	ctx = context.WithValue(ctx, constant.REQ_INFO, ph.GetReqHandler())
 	// set header
-	ph.SetHeader(header.Handler.GetHeader(ctx))
+	ph.SetHeader(extension.GetHeader(constant.TUYA_HEADER).GetHeader(ctx))
 	//get req
 	return ph.DoRequest(ctx)
 }
@@ -128,7 +116,7 @@ func WithResp(res interface{}) ParamFunc {
 	}
 }
 
-func WithErrProc(code int, f error_proc.IError) ParamFunc {
+func WithErrProc(code int, f extension.IError) ParamFunc {
 	return func(v *httplib.ProxyHttp) {
 		v.SetErrProc(code, f)
 	}

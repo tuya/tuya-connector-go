@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/error_proc"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/logger"
 	"io/ioutil"
 	"net/http"
@@ -21,7 +21,7 @@ type ProxyHttp struct {
 	req     *http.Request
 	resp    interface{}
 	//mu        *sync.RWMutex
-	errMap map[int]error_proc.IError
+	errMap map[int]extension.IError
 }
 
 func NewProxyHttp() *ProxyHttp {
@@ -30,7 +30,7 @@ func NewProxyHttp() *ProxyHttp {
 		req: &http.Request{
 			Header: make(http.Header),
 		},
-		errMap: make(map[int]error_proc.IError),
+		errMap: make(map[int]extension.IError),
 	}
 }
 
@@ -64,7 +64,7 @@ func (t *ProxyHttp) SetResp(v interface{}) {
 	t.resp = v
 }
 
-func (t *ProxyHttp) SetErrProc(code int, v error_proc.IError) {
+func (t *ProxyHttp) SetErrProc(code int, v extension.IError) {
 	t.errMap[code] = v
 }
 

@@ -5,7 +5,9 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/tuya/pulsar-client-go/core/manage"
+	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/logger"
 	"github.com/tuya/tuya-connector-go/connector/utils"
 	"reflect"
@@ -20,13 +22,13 @@ const (
 	DefaultFlowPermit       = 10
 )
 
-type IEventMessage interface {
-	// init event message client
-	InitMessageClient()
-	// listen event message
-	SubEventMessage(f interface{})
-	// stop event message receive
-	Stop()
+func init() {
+	extension.SetMessage(constant.TUYA_MESSAGE, newMessageInstance)
+	fmt.Println("init message extension......")
+}
+
+func newMessageInstance() extension.IEventMessage {
+	return NewEventMsgWrapper()
 }
 
 type eventMessage struct {
@@ -34,12 +36,7 @@ type eventMessage struct {
 	c    *client
 }
 
-var Handler IEventMessage
-
-func NewEventMsgWrapper() IEventMessage {
-	if env.Config.GetEventMsgHandler() != nil {
-		return env.Config.GetEventMsgHandler().(IEventMessage)
-	}
+func NewEventMsgWrapper() extension.IEventMessage {
 	return &eventMessage{}
 }
 

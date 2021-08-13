@@ -2,28 +2,27 @@ package header
 
 import (
 	"context"
+	"fmt"
 	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
+	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/sign"
-	"github.com/tuya/tuya-connector-go/connector/token"
 	"github.com/tuya/tuya-connector-go/connector/utils"
 )
 
-// header interface
-type IHeader interface {
-	GetHeader(ctx context.Context) map[string]string
+func init() {
+	extension.SetHeader(constant.TUYA_HEADER, newHeaderInstance)
+	fmt.Println("init header extension......")
+}
+
+func newHeaderInstance() extension.IHeader {
+	return NewHeaderWrapper()
 }
 
 type headerWrapper struct {
 }
 
-var Handler IHeader
-
-func NewHeaderWrapper() IHeader {
-	if env.Config.GetHeaderHandler() != nil {
-		return env.Config.GetHeaderHandler().(IHeader)
-	}
+func NewHeaderWrapper() extension.IHeader {
 	return &headerWrapper{}
 }
 
@@ -36,7 +35,7 @@ func (t *headerWrapper) GetHeader(ctx context.Context) map[string]string {
 	m[constant.Header_ClientID] = env.Config.GetAccessID()
 	nonce := utils.GetUUID()
 	m[constant.Header_Nonce] = nonce
-	var token, err = token.Handler.GetToken(ctx)
+	var token, err = extension.GetToken(constant.TUYA_TOKEN).GetToken(ctx)
 	if err != nil {
 		logger.Log.Errorf("[GetHeader] get token err: %s", err.Error())
 		return nil
@@ -49,7 +48,7 @@ func (t *headerWrapper) GetHeader(ctx context.Context) map[string]string {
 	ctx = context.WithValue(ctx, constant.TOKEN, token)
 	ctx = context.WithValue(ctx, constant.TS, ts)
 	ctx = context.WithValue(ctx, constant.NONCE, nonce)
-	signStr := sign.Handler.GetSign(ctx)
+	signStr := extension.GetSign(constant.TUYA_SIGN).Sign(ctx)
 	m[constant.Header_Sign] = signStr
 	return m
 }

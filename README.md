@@ -49,7 +49,7 @@ func watitSignal() {
    for {
       select {
       case c := <-quitCh:
-         message.Handler.Stop()
+         extension.GetMessage(constant.TUYA_MESSAGE).Stop()
          logger.Log.Infof("receive sig:%v, shutdown the http server...", c.String())
          return
       }
@@ -143,14 +143,14 @@ func GetDevice(c *gin.Context) {
 ```go
 func Listener() {
    // Initialize the message queue client
-   message.Handler.InitMessageClient()
+   extension.GetMessage(constant.TUYA_MESSAGE).InitMessageClient()
    // The message event that the specified device changes the name
-   message.Handler.SubEventMessage(func(m *event.NameUpdateMessage) {
+   extension.GetMessage(constant.TUYA_MESSAGE).SubEventMessage(func(m *event.NameUpdateMessage) {
       logger.Log.Info("=========== name update： ==========")
       logger.Log.Info(m)
    })
    // The message event that the specified device reports data
-   message.Handler.SubEventMessage(func(m *event.StatusReportMessage) {
+   extension.GetMessage(constant.TUYA_MESSAGE).SubEventMessage(func(m *event.StatusReportMessage) {
       logger.Log.Info("=========== report data： ==========")
       for _, v := range m.Status {
          logger.Log.Infof(v.Code, v.Value)
@@ -166,20 +166,12 @@ func Listener() {
    When an error code is returned after you request OpenAPI, you can customize the struct that implements `IError` to deal with different error codes.<br/>
 
 
-- `ILog` interface
-
-   The framework provides the log struct that supports the custom implementation of ILog to personalize printing. The object is injected into the underlying framework when the service is initialized.<br/>
-
-   > ```
-   > connector.InitWithOptions(env.WithLogWrapper(CustomLog))
-   > ```
-
 - `IToken` interface
 
    Support the token struct to customize `IToken`, manage the token lifecycle, get or refresh the token, and locally cache the token information. The object is injected into the underlying framework when the service is initialized.<br/>
 
    > ```
-   > connector.InitWithOptions(env.WithTokenWrapper(CustomToken))
+   > extension.GetToken(constant.CUSTOM_TOKEN)
    > ```
 
 
@@ -188,7 +180,7 @@ func Listener() {
    Support the custom header struct. Customize processing logic when you request Tuya IoT Cloud OpenAPI, including attribute values and signatures that need to be added. The object is injected into the underlying framework when the service is initialized.<br/>
 
    > ```
-   > connector.InitWithOptions(env.WithHeaderWrapper(CustomHeader))
+   > extension.GetHeader(constant.CUSTOM_HEADER)
    > ```
 
 - `ISign` interface
@@ -196,7 +188,7 @@ func Listener() {
    Customize the signature logic with the ISign interface. The object is injected into the underlying framework when the service is initialized.<br/>
 
    > ```
-   > connector.InitWithOptions(env.WithSignWrapper(CustomSign))
+   > extension.GetSign(constant.CUSTOM_SIGN)
    > ```
 
 - `IEventMessage` interface
@@ -204,7 +196,7 @@ func Listener() {
    Customize the message event subscription. The connection methods, receiving messages, and data decryption may be different for message queues. In this case, you need to customize the message subscription logic. The object is injected into the underlying framework when the service is initialized.<br/>
 
    > ```
-   > connector.InitWithOptions(env.WithEventMsgWrapper(CustomEventMessage))
+   > extension.GetMessage(constant.CUSTOM_MESSAGE)
    > ```
 
 ### Message subscription
