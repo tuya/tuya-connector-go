@@ -2,16 +2,18 @@ package sign
 
 import (
 	"context"
+	"github.com/tuya/tuya-connector-go/connector/constant"
 	"github.com/tuya/tuya-connector-go/connector/env"
-	"os"
 	"testing"
 )
 
 func TestSign(t *testing.T) {
+	env.Config = env.NewEnv()
+	env.Config.Init()
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, constant.TOKEN, "123")
+	ctx = context.WithValue(ctx, constant.TS, "123")
+	ctx = context.WithValue(ctx, constant.NONCE, "123")
 	sw := &signWrapper{}
-	sw.ak = os.Getenv(env.TUYA_ACCESSID)
-	sw.sk = os.Getenv(env.TUYA_ACCESSKEY)
-	sw.token = "123"
-	sw.ts = "123"
-	t.Log(sw.GetSign(context.Background()))
+	t.Log(sw.Sign(ctx))
 }

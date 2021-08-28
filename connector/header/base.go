@@ -35,7 +35,7 @@ func (t *headerWrapper) GetHeader(ctx context.Context) map[string]string {
 	m[constant.Header_ClientID] = env.Config.GetAccessID()
 	nonce := utils.GetUUID()
 	m[constant.Header_Nonce] = nonce
-	var token, err = extension.GetToken(constant.TUYA_TOKEN).GetToken(ctx)
+	var token, err = extension.GetToken(constant.TUYA_TOKEN).Do(ctx)
 	if err != nil {
 		logger.Log.Errorf("[GetHeader] get token err: %s", err.Error())
 		return nil

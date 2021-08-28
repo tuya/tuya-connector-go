@@ -5,8 +5,8 @@ import "context"
 // token interface
 // implemented this interface and supports custom token manage
 type IToken interface {
-	GetToken(ctx context.Context) (string, error)
-	GetRefreshToken(ctx context.Context) (string, error)
+	Do(ctx context.Context) (string, error)
+	Refresh(ctx context.Context) (string, error)
 }
 
 var (

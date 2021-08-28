@@ -76,6 +76,6 @@ type tokenError struct {
 
 func (t *tokenError) Process(ctx context.Context, code int, msg string) {
 	if code == constant.TOKEN_EXPIRED {
-		_, _ = extension.GetToken(constant.TUYA_TOKEN).GetRefreshToken(ctx)
+		_, _ = extension.GetToken(constant.TUYA_TOKEN).Do(ctx)
 	}
 }

@@ -38,9 +38,9 @@ func NewSignWrapper() extension.ISign {
 
 // No need to pass the token parameter when getting the token
 func (t *signWrapper) Sign(ctx context.Context) string {
-	t.token = ctx.Value(constant.TOKEN).(string)
-	t.ts = ctx.Value(constant.TS).(string)
-	t.nonce = ctx.Value(constant.NONCE).(string)
+	t.token, _ = ctx.Value(constant.TOKEN).(string)
+	t.ts, _ = ctx.Value(constant.TS).(string)
+	t.nonce, _ = ctx.Value(constant.NONCE).(string)
 	t.stringToSign = t.calStringToSign(ctx)
 	sign := utils.HS256Sign(env.Config.GetAccessKey(), env.Config.GetAccessID()+t.token+t.ts+t.nonce+t.stringToSign)
 	return strings.ToUpper(sign)
