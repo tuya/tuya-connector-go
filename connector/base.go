@@ -40,12 +40,13 @@ func makeRequest(ctx context.Context, params ...ParamFunc) error {
 		}
 	}()
 	ph := httplib.NewProxyHttp()
+	params = append(params, WithErrProc(constant.TOKEN_EXPIRED, &tokenError{ph: ph}))
 	for _, p := range params {
 		p(ph)
 	}
 	ctx = context.WithValue(ctx, constant.REQ_INFO, ph.GetReqHandler())
 	// set header
-	ph.SetHeader(extension.GetHeader(constant.TUYA_HEADER).GetHeader(ctx))
+	ph.SetHeader(extension.GetHeader(constant.TUYA_HEADER).Do(ctx))
 	//get req
 	return ph.DoRequest(ctx)
 }
@@ -119,5 +120,18 @@ func WithResp(res interface{}) ParamFunc {
 func WithErrProc(code int, f extension.IError) ParamFunc {
 	return func(v *httplib.ProxyHttp) {
 		v.SetErrProc(code, f)
+	}
+}
+
+type tokenError struct {
+	ph *httplib.ProxyHttp
+}
+
+func (t *tokenError) Process(ctx context.Context, code int, msg string) {
+	if code == constant.TOKEN_EXPIRED {
+		_, _ = extension.GetToken(constant.TUYA_TOKEN).Refresh(ctx)
+		t.ph.SetPayload(t.ph.GetPayload())
+		t.ph.SetHeader(extension.GetHeader(constant.TUYA_HEADER).Do(ctx))
+		t.ph.DoRequest(ctx)
 	}
 }

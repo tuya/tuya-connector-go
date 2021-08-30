@@ -46,7 +46,6 @@ func (t *token) commonReqToken(ctx context.Context, uri string) (*tokenAPIRespon
 	th.SetMethod(http.MethodGet)
 	th.SetAPIUri(env.Config.GetApiHost() + uri)
 	th.SetResp(resp)
-	th.SetErrProc(constant.TOKEN_EXPIRED, &tokenError{})
 	ts := utils.IntToStr(utils.Microstamp())
 	nonce := utils.GetUUID()
 	ctx = context.WithValue(ctx, constant.REQ_INFO, th.GetReqHandler())
@@ -69,13 +68,4 @@ func (t *token) commonReqToken(ctx context.Context, uri string) (*tokenAPIRespon
 	}
 	t.setToken(resp.Result.AccessToken, resp.Result.RefreshToken, resp.Result.ExpireTime)
 	return resp, err
-}
-
-type tokenError struct {
-}
-
-func (t *tokenError) Process(ctx context.Context, code int, msg string) {
-	if code == constant.TOKEN_EXPIRED {
-		_, _ = extension.GetToken(constant.TUYA_TOKEN).Do(ctx)
-	}
 }

@@ -60,6 +60,10 @@ func (t *ProxyHttp) SetPayload(v []byte) {
 	t.req.Body = ioutil.NopCloser(bytes.NewBuffer(v))
 }
 
+func (t *ProxyHttp) GetPayload() []byte {
+	return t.payload
+}
+
 func (t *ProxyHttp) SetResp(v interface{}) {
 	t.resp = v
 }
@@ -105,6 +109,9 @@ func (t *ProxyHttp) DoRequest(ctx context.Context) error {
 			}
 			ctx = context.WithValue(ctx, constant.ExeCount, 1)
 			f.Process(ctx, rst.Code, rst.Msg)
+			if rst.Code == constant.TOKEN_EXPIRED {
+				return nil
+			}
 			return errors.New(rst.Msg)
 		}
 	}

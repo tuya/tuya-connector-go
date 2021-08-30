@@ -44,17 +44,10 @@ func (t *token) Do(ctx context.Context) (string, error) {
 	if exeCnt != nil && exeCnt.(int) > 0 {
 		tokenCtx = context.WithValue(tokenCtx, constant.ExeCount, exeCnt)
 	}
-	//if tk == "" || t.reToken == "" {
 	_, err := t.fromAPIGetToken(tokenCtx)
 	if err != nil {
 		return "", err
 	}
-	/*} else {
-		_, err := t.fromAPIRefreshToken(tokenCtx)
-		if err != nil {
-			return "", err
-		}
-	}*/
 	t.mu.RLock()
 	tk = t.token
 	t.mu.RUnlock()
@@ -62,14 +55,10 @@ func (t *token) Do(ctx context.Context) (string, error) {
 }
 
 func (t *token) Refresh(ctx context.Context) (string, error) {
-	if t.reToken != "" {
-		return t.reToken, nil
-	}
-	_, err := t.Do(ctx)
-	if err != nil {
-		return "", err
-	}
-	return t.reToken, nil
+	t.mu.RLock()
+	t.token = ""
+	t.mu.RUnlock()
+	return t.Do(ctx)
 }
 
 func (t *token) setToken(token, refreshToken string, expire int) {

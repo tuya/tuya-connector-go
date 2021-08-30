@@ -26,7 +26,7 @@ func NewHeaderWrapper() extension.IHeader {
 	return &headerWrapper{}
 }
 
-func (t *headerWrapper) GetHeader(ctx context.Context) map[string]string {
+func (t *headerWrapper) Do(ctx context.Context) map[string]string {
 	m := make(map[string]string)
 	m[constant.Header_ContentType] = constant.ContentType_JSON
 	m[constant.Header_SignMethod] = constant.SignMethod_HMAC

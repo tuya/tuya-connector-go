@@ -8,7 +8,7 @@ type IError interface {
 
 // header interface
 type IHeader interface {
-	GetHeader(ctx context.Context) map[string]string
+	Do(ctx context.Context) map[string]string
 }
 
 var (
