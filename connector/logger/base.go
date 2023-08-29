@@ -3,9 +3,6 @@ package logger
 import (
 	"bytes"
 	"fmt"
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env/extension"
-	"github.com/tuya/tuya-connector-go/connector/utils"
 	"log"
 	"os"
 	"path"
@@ -14,6 +11,10 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env/extension"
+	"github.com/callmegema/tuya-connector-go/connector/utils"
 )
 
 func init() {
@@ -124,7 +125,7 @@ func (t *TyLogger) AssemblyMsg(level int, msg string) string {
 	return logInfo
 }
 
-//Log LOG
+// Log LOG
 func (t *TyLogger) Log(v ...interface{}) {
 	t.Output(LOG, v...)
 }
@@ -133,7 +134,7 @@ func (t *TyLogger) Logf(format string, v ...interface{}) {
 	t.Output(LOG, fmt.Sprintf(format, v...))
 }
 
-//Debug DEBUG
+// Debug DEBUG
 func (t *TyLogger) Debug(v ...interface{}) {
 	t.Output(DEBUG, v...)
 }
@@ -142,7 +143,7 @@ func (t *TyLogger) Debugf(format string, v ...interface{}) {
 	t.Output(DEBUG, fmt.Sprintf(format, v...))
 }
 
-//Info INFO
+// Info INFO
 func (t *TyLogger) Info(v ...interface{}) {
 	t.Output(INFO, v...)
 }
@@ -151,7 +152,7 @@ func (t *TyLogger) Infof(format string, v ...interface{}) {
 	t.Output(INFO, fmt.Sprintf(format, v...))
 }
 
-//Warn WARN
+// Warn WARN
 func (t *TyLogger) Warn(v ...interface{}) {
 	t.Output(WARN, v...)
 }
@@ -160,7 +161,7 @@ func (t *TyLogger) Warnf(format string, v ...interface{}) {
 	t.Output(WARN, fmt.Sprintf(format, v...))
 }
 
-//Error ERROR
+// Error ERROR
 func (t *TyLogger) Error(v ...interface{}) {
 	t.Output(ERROR, v...)
 }
@@ -169,7 +170,7 @@ func (t *TyLogger) Errorf(format string, v ...interface{}) {
 	t.Output(ERROR, fmt.Sprintf(format, v...))
 }
 
-//Fatal FATAL
+// Fatal FATAL
 func (t *TyLogger) Fatal(v ...interface{}) {
 	t.Output(FATAL, v...)
 }

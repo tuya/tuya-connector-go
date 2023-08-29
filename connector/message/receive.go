@@ -3,10 +3,11 @@ package message
 import (
 	"encoding/base64"
 	"encoding/json"
-	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/message/event"
-	"github.com/tuya/tuya-connector-go/connector/utils"
 	"reflect"
+
+	"github.com/callmegema/tuya-connector-go/connector/logger"
+	"github.com/callmegema/tuya-connector-go/connector/message/event"
+	"github.com/callmegema/tuya-connector-go/connector/utils"
 )
 
 type messageFunc func([]byte)

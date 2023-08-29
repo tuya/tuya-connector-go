@@ -3,13 +3,14 @@ package token
 import (
 	"context"
 	"fmt"
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env"
-	"github.com/tuya/tuya-connector-go/connector/env/extension"
-	"github.com/tuya/tuya-connector-go/connector/httplib"
-	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/utils"
 	"net/http"
+
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env"
+	"github.com/callmegema/tuya-connector-go/connector/env/extension"
+	"github.com/callmegema/tuya-connector-go/connector/httplib"
+	"github.com/callmegema/tuya-connector-go/connector/logger"
+	"github.com/callmegema/tuya-connector-go/connector/utils"
 )
 
 const (

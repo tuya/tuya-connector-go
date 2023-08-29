@@ -3,10 +3,11 @@ package token
 import (
 	"context"
 	"fmt"
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env/extension"
 	"sync"
 	"time"
+
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env/extension"
 )
 
 func init() {

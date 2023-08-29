@@ -1,8 +1,8 @@
 package router
 
 import (
+	"github.com/callmegema/tuya-connector-go/example/service"
 	"github.com/gin-gonic/gin"
-	"github.com/tuya/tuya-connector-go/example/service"
 )
 
 func NewGinEngin() *gin.Engine {

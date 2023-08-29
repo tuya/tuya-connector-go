@@ -3,11 +3,12 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/tuya/tuya-connector-go/connector"
-	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/example/model"
 	"io/ioutil"
+
+	"github.com/callmegema/tuya-connector-go/connector"
+	"github.com/callmegema/tuya-connector-go/connector/logger"
+	"github.com/callmegema/tuya-connector-go/example/model"
+	"github.com/gin-gonic/gin"
 )
 
 type Response map[string]interface{}

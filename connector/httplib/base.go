@@ -5,12 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env/extension"
-	"github.com/tuya/tuya-connector-go/connector/logger"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env/extension"
+	"github.com/callmegema/tuya-connector-go/connector/logger"
 )
 
 type ProxyHttp struct {

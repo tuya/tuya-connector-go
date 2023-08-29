@@ -1,10 +1,10 @@
 package messaging
 
 import (
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env/extension"
-	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/message/event"
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env/extension"
+	"github.com/callmegema/tuya-connector-go/connector/logger"
+	"github.com/callmegema/tuya-connector-go/connector/message/event"
 )
 
 func Listener() {
