@@ -22,7 +22,7 @@ func init() {
 }
 
 func newLogInstance() extension.ILogger {
-	return NewDefaultLogger("tysdk", true)
+	return NewDefaultLogger("tysdk", false)
 }
 
 var Log extension.ILogger
@@ -40,7 +40,7 @@ func NewDefaultLogger(appName string, isDebug bool) extension.ILogger {
 func NewLogger(appName string, maxFileSize int64, fileSizeUnit UNIT, isDebug bool) extension.ILogger {
 	tyLog := &TyLogger{
 		consolePrint: isDebug,
-		logLevel:     INFO,
+		logLevel:     ERROR,
 	}
 	if isDebug {
 		tyLog.logLevel = DEBUG

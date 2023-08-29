@@ -27,7 +27,7 @@ func InitWithOptions(opts ...env.OptionFunc) {
 	}
 	env.Config.Init()
 	if !env.Config.DebugMode() {
-		logger.Log.SetLevel(logger.INFO)
+		logger.Log.SetLevel(logger.ERROR)
 	}
 	logger.Log.Info("### iot core init success ###")
 }
