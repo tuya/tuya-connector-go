@@ -1,4 +1,4 @@
-module github.com/tuya/tuya-connector-go
+module github.com/callmegema/tuya-connector-go
 
 go 1.16
 
