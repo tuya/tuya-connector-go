@@ -1,32 +1,27 @@
 [English](README.md) | [中文版](README_cn.md)
 
-[![license: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector-go/blob/master/LICENSE 'License')
+[![license: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/callmegema/tuya-connector-go/blob/master/LICENSE "License")
 ![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
 
-`tuya-connector-go`通过简单的配置和灵活的扩展机制，将云端API映射成本地API，订阅云端消息分发为本地事件，使得开发者在云云对接（OpenAPI或者消息订阅）项目开发过程中，不需要花费过多精力关注云环境连接和请求处理过程，从而帮助开发者更好的聚焦在自身的业务逻辑上。
+`tuya-connector-go`通过简单的配置和灵活的扩展机制，将云端 API 映射成本地 API，订阅云端消息分发为本地事件，使得开发者在云云对接（OpenAPI 或者消息订阅）项目开发过程中，不需要花费过多精力关注云环境连接和请求处理过程，从而帮助开发者更好的聚焦在自身的业务逻辑上。
 
 ## 快速开始
 
 #### 准备
 
-
-- AccessId & AccessKey：平台授权密钥
-- API地址：根据不同的业务区域选择API地址
-- Pulsar地址：根据不同的业务区域选择Pulsar地址
-
+-   AccessId & AccessKey：平台授权密钥
+-   API 地址：根据不同的业务区域选择 API 地址
+-   Pulsar 地址：根据不同的业务区域选择 Pulsar 地址
 
 #### 配置
 
+-   第一种方式：设置环境变量，项目启动时从环境变量读取配置，推荐<br/>
+    export TUYA_API_HOST=https://xxxxx.com<br/>
+    export TUYA_ACCESSID=xxxxxx<br/>
+    export TUYA_ACCESSKEY=xxxxxxx<br/>
+    export TUYA_MSG_HOST=pulsar+ssl://xxxxxx
 
-- 第一种方式：设置环境变量，项目启动时从环境变量读取配置，推荐<br/>
-export TUYA_API_HOST=https://xxxxx.com<br/>
-export TUYA_ACCESSID=xxxxxx<br/>
-export TUYA_ACCESSKEY=xxxxxxx<br/>
-export TUYA_MSG_HOST=pulsar+ssl://xxxxxx
-
-- 第二种方式：在项目里边定义变量，硬编码设置
-
-
+-   第二种方式：在项目里边定义变量，硬编码设置
 
 #### 使用
 
@@ -75,7 +70,7 @@ func main() {
 }
 ```
 
-##### 2、调用OpenAPI（这里使用gin框架作演示）
+##### 2、调用 OpenAPI（这里使用 gin 框架作演示）
 
 ```go
 // 使用gin创建路由
@@ -110,7 +105,7 @@ type GetDeviceResponse struct {
 
 ```
 
-在调用OpenAPI时可根据不同error错误码自定义处理逻辑，需要创建实现IError接口的struct
+在调用 OpenAPI 时可根据不同 error 错误码自定义处理逻辑，需要创建实现 IError 接口的 struct
 
 ```go
 type DeviceError struct {
@@ -144,7 +139,7 @@ func GetDevice(c *gin.Context) {
 
 ```go
 func Listener() {
-   // 初始化消息队列客户端 
+   // 初始化消息队列客户端
    extension.GetMessage(constant.TUYA_MESSAGE).InitMessageClient()
    // 订阅设备修改名称消息事件
    extension.GetMessage(constant.TUYA_MESSAGE).SubEventMessage(func(m *event.NameUpdateMessage) {
@@ -163,43 +158,41 @@ func Listener() {
 
 ## 自定义扩展实现
 
-- IError接口
+-   IError 接口
 
-   当请求OpenAPI后的响应结果返回错误码时，可以通过自定义实现`IError`的struct来针对不同的错误码进行相应的处理。<br/>
+    当请求 OpenAPI 后的响应结果返回错误码时，可以通过自定义实现`IError`的 struct 来针对不同的错误码进行相应的处理。<br/>
 
+-   IToken 接口
 
-- IToken接口
+    支持自定义实现 IToken 的 token struct，管理 token 生命周期，获取或刷新 token，token 信息本地缓存，服务初始化时将对象注入到底层框架。<br />
 
-   支持自定义实现IToken的token struct，管理token生命周期，获取或刷新token，token信息本地缓存，服务初始化时将对象注入到底层框架。<br />
+    > ```
+    > extension.GetToken(constant.CUSTOM_TOKEN)
+    > ```
 
-   > ```
-   > extension.GetToken(constant.CUSTOM_TOKEN)
-   > ```
+-   IHeader 接口
 
+    支持自定义 header struct，请求涂鸦云 OpenAPI 时可自定义处理逻辑，包括需要添加的属性值以及签名，服务初始化时将对象注入到底层框架。<br />
 
-- IHeader接口
+    > ```
+    > extension.GetHeader(constant.CUSTOM_HEADER)
+    > ```
 
-   支持自定义header struct，请求涂鸦云OpenAPI时可自定义处理逻辑，包括需要添加的属性值以及签名，服务初始化时将对象注入到底层框架。<br />
+-   ISign 接口
 
-   > ```
-   > extension.GetHeader(constant.CUSTOM_HEADER)
-   > ```
+    实现 ISign 接口可自定义签名逻辑，服务初始化时将对象注入到底层框架。<br />
 
-- ISign接口
+    > ```
+    > extension.GetSign(constant.CUSTOM_SIGN)
+    > ```
 
-   实现ISign接口可自定义签名逻辑，服务初始化时将对象注入到底层框架。<br />
+-   IEventMessage 接口
 
-   > ```
-   > extension.GetSign(constant.CUSTOM_SIGN)
-   > ```
+    支持自定义消息事件订阅，不同消息队列连接方式、接收消息、数据解密可能会有所不同，此时需要自定义实现消息订阅逻辑。服务初始化时将对象注入到底层框架。<br />
 
-- IEventMessage接口
-
-   支持自定义消息事件订阅，不同消息队列连接方式、接收消息、数据解密可能会有所不同，此时需要自定义实现消息订阅逻辑。服务初始化时将对象注入到底层框架。<br />
-
-   > ```
-   > extension.GetMessage(constant.CUSTOM_MESSAGE)
-   > ```
+    > ```
+    > extension.GetMessage(constant.CUSTOM_MESSAGE)
+    > ```
 
 ### 消息订阅
 
@@ -219,6 +212,7 @@ func Listener() {
 | SceneExecuteMessage             | sceneExecute             | 场景执行           |
 
 ### 框架整体架构
+
 ![整体架构](assets/architect_cn.jpg)
 ![集成&扩展](assets/integration&extension_cn.jpg)
 
@@ -228,7 +222,7 @@ func Listener() {
 
 ## 技术支持
 
-你可以通过以下方式获得Tua开发者技术支持：
+你可以通过以下方式获得 Tua 开发者技术支持：
 
-- 涂鸦帮助中心: https://support.tuya.com/zh/help
-- 涂鸦技术工单平台: https://iot.tuya.com/council
+-   涂鸦帮助中心: https://support.tuya.com/zh/help
+-   涂鸦技术工单平台: https://iot.tuya.com/council

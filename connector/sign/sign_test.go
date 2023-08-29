@@ -2,9 +2,10 @@ package sign
 
 import (
 	"context"
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env"
 	"testing"
+
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env"
 )
 
 func TestSign(t *testing.T) {

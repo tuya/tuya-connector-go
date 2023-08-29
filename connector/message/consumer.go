@@ -2,9 +2,10 @@ package message
 
 import (
 	"context"
-	"github.com/tuya/tuya-connector-go/connector/logger"
 	"sync/atomic"
 	"time"
+
+	"github.com/callmegema/tuya-connector-go/connector/logger"
 
 	"github.com/tuya/pulsar-client-go/core/manage"
 	"github.com/tuya/pulsar-client-go/core/msg"

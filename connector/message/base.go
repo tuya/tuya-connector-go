@@ -4,17 +4,18 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/tuya/pulsar-client-go/core/manage"
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env"
-	"github.com/tuya/tuya-connector-go/connector/env/extension"
-	"github.com/tuya/tuya-connector-go/connector/logger"
-	"github.com/tuya/tuya-connector-go/connector/utils"
 	"reflect"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env"
+	"github.com/callmegema/tuya-connector-go/connector/env/extension"
+	"github.com/callmegema/tuya-connector-go/connector/logger"
+	"github.com/callmegema/tuya-connector-go/connector/utils"
+	"github.com/tuya/pulsar-client-go/core/manage"
 )
 
 const (

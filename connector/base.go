@@ -1,19 +1,20 @@
 package connector
 
 import (
-	_ "github.com/tuya/tuya-connector-go/connector/header"
-	_ "github.com/tuya/tuya-connector-go/connector/logger"
-	_ "github.com/tuya/tuya-connector-go/connector/message"
-	_ "github.com/tuya/tuya-connector-go/connector/sign"
-	_ "github.com/tuya/tuya-connector-go/connector/token"
+	_ "github.com/callmegema/tuya-connector-go/connector/header"
+	_ "github.com/callmegema/tuya-connector-go/connector/logger"
+	_ "github.com/callmegema/tuya-connector-go/connector/message"
+	_ "github.com/callmegema/tuya-connector-go/connector/sign"
+	_ "github.com/callmegema/tuya-connector-go/connector/token"
 
 	"context"
-	"github.com/tuya/tuya-connector-go/connector/constant"
-	"github.com/tuya/tuya-connector-go/connector/env"
-	"github.com/tuya/tuya-connector-go/connector/env/extension"
-	"github.com/tuya/tuya-connector-go/connector/httplib"
-	"github.com/tuya/tuya-connector-go/connector/logger"
 	"net/http"
+
+	"github.com/callmegema/tuya-connector-go/connector/constant"
+	"github.com/callmegema/tuya-connector-go/connector/env"
+	"github.com/callmegema/tuya-connector-go/connector/env/extension"
+	"github.com/callmegema/tuya-connector-go/connector/httplib"
+	"github.com/callmegema/tuya-connector-go/connector/logger"
 )
 
 type ParamFunc func(*httplib.ProxyHttp)

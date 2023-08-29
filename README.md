@@ -1,6 +1,6 @@
 [English](README.md) | [中文版](README_cn.md)
 
-[![License: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector-go/blob/master/LICENSE 'License')
+[![License: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/callmegema/tuya-connector-go/blob/master/LICENSE "License")
 ![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
 
 The `tuya-connector-go` framework maps cloud APIs to local APIs based on simple configurations and flexible extension mechanisms. You can subscribe to the distribution of cloud messages as local events. You can put all the focus on business logic without taking care of server-side programming nor relational databases. The OpenAPI or message subscription process is simplified, so you can focus on service logic and promote development efficiency.
@@ -9,23 +9,19 @@ The `tuya-connector-go` framework maps cloud APIs to local APIs based on simple 
 
 #### Preparation
 
-
-- `AccessId` & `AccessKey`: the authorization key.
-- API address: Select the API address that is supported by the areas in which your business is deployed.
-- Pulsar address: Select the Pulsar address that is supported by business areas in which your business is deployed.
-
+-   `AccessId` & `AccessKey`: the authorization key.
+-   API address: Select the API address that is supported by the areas in which your business is deployed.
+-   Pulsar address: Select the Pulsar address that is supported by business areas in which your business is deployed.
 
 #### Configuration
 
+-   Method 1: recommended. Set environment variables, and read the configuration from the environment variables when the project starts.<br/>
+    export TUYA_API_HOST=https://xxxxx.com<br/>
+    export TUYA_ACCESSID=xxxxxx<br/>
+    export TUYA_ACCESSKEY=xxxxxxx<br/>
+    export TUYA_MSG_HOST=pulsar+ssl://xxxxxx
 
--  Method 1: recommended. Set environment variables, and read the configuration from the environment variables when the project starts.<br/>
-export TUYA_API_HOST=https://xxxxx.com<br/>
-export TUYA_ACCESSID=xxxxxx<br/>
-export TUYA_ACCESSKEY=xxxxxxx<br/>
-export TUYA_MSG_HOST=pulsar+ssl://xxxxxx
-
--  Method 2: Define variables in the project, with hard-coded settings.
-
+-   Method 2: Define variables in the project, with hard-coded settings.
 
 #### Usage
 
@@ -161,73 +157,71 @@ func Listener() {
 
 ## Custom extension implementation
 
-- `IError` interface
+-   `IError` interface
 
-   When an error code is returned after you request OpenAPI, you can customize the struct that implements `IError` to deal with different error codes.<br/>
+    When an error code is returned after you request OpenAPI, you can customize the struct that implements `IError` to deal with different error codes.<br/>
 
+-   `IToken` interface
 
-- `IToken` interface
+    Support the token struct to customize `IToken`, manage the token lifecycle, get or refresh the token, and locally cache the token information. The object is injected into the underlying framework when the service is initialized.<br/>
 
-   Support the token struct to customize `IToken`, manage the token lifecycle, get or refresh the token, and locally cache the token information. The object is injected into the underlying framework when the service is initialized.<br/>
+    > ```
+    > extension.GetToken(constant.CUSTOM_TOKEN)
+    > ```
 
-   > ```
-   > extension.GetToken(constant.CUSTOM_TOKEN)
-   > ```
+-   `IHeader` interface
 
+    Support the custom header struct. Customize processing logic when you request Tuya IoT Cloud OpenAPI, including attribute values and signatures that need to be added. The object is injected into the underlying framework when the service is initialized.<br/>
 
-- `IHeader` interface
+    > ```
+    > extension.GetHeader(constant.CUSTOM_HEADER)
+    > ```
 
-   Support the custom header struct. Customize processing logic when you request Tuya IoT Cloud OpenAPI, including attribute values and signatures that need to be added. The object is injected into the underlying framework when the service is initialized.<br/>
+-   `ISign` interface
 
-   > ```
-   > extension.GetHeader(constant.CUSTOM_HEADER)
-   > ```
+    Customize the signature logic with the ISign interface. The object is injected into the underlying framework when the service is initialized.<br/>
 
-- `ISign` interface
+    > ```
+    > extension.GetSign(constant.CUSTOM_SIGN)
+    > ```
 
-   Customize the signature logic with the ISign interface. The object is injected into the underlying framework when the service is initialized.<br/>
+-   `IEventMessage` interface
 
-   > ```
-   > extension.GetSign(constant.CUSTOM_SIGN)
-   > ```
+    Customize the message event subscription. The connection methods, receiving messages, and data decryption may be different for message queues. In this case, you need to customize the message subscription logic. The object is injected into the underlying framework when the service is initialized.<br/>
 
-- `IEventMessage` interface
-
-   Customize the message event subscription. The connection methods, receiving messages, and data decryption may be different for message queues. In this case, you need to customize the message subscription logic. The object is injected into the underlying framework when the service is initialized.<br/>
-
-   > ```
-   > extension.GetMessage(constant.CUSTOM_MESSAGE)
-   > ```
+    > ```
+    > extension.GetMessage(constant.CUSTOM_MESSAGE)
+    > ```
 
 ### Message subscription
 
 You can add the processing function for required events. The framework includes all Tuya's cloud message event types. The message data contains ciphertext messages and plaintext messages.
 
-| **Message event** | **BizCode** | **Description** |
-| ------------------------------- | ------------------------ | ------------------ |
-| StatusReportMessage | statusReport | Report data to the cloud. |
-| OnlineMessage | online | A device is online. |
-| OfflineMessage | offline | A device is offline. |
-| NameUpdateMessage | nameUpdate | Modify the device name. |
-| DpNameUpdateMessage | dpNameUpdate | Modify the name of a data point. |
-| DeleteMessage | delete | Remove a device. |
-| BindUserMessage | bindUser | Bind the device to a user account. |
-| UpgradeStatusMessage | upgradeStatus | The update status. |
-| AutomationExternalActionMessage | automationExternalAction | Automate an external action. |
-| SceneExecuteMessage | sceneExecute | Execute a scene. |
+| **Message event**               | **BizCode**              | **Description**                    |
+| ------------------------------- | ------------------------ | ---------------------------------- |
+| StatusReportMessage             | statusReport             | Report data to the cloud.          |
+| OnlineMessage                   | online                   | A device is online.                |
+| OfflineMessage                  | offline                  | A device is offline.               |
+| NameUpdateMessage               | nameUpdate               | Modify the device name.            |
+| DpNameUpdateMessage             | dpNameUpdate             | Modify the name of a data point.   |
+| DeleteMessage                   | delete                   | Remove a device.                   |
+| BindUserMessage                 | bindUser                 | Bind the device to a user account. |
+| UpgradeStatusMessage            | upgradeStatus            | The update status.                 |
+| AutomationExternalActionMessage | automationExternalAction | Automate an external action.       |
+| SceneExecuteMessage             | sceneExecute             | Execute a scene.                   |
 
 ### Architecture of the framework
 
-![Integration of the framework](https://github.com/tuya/tuya-connector-go/blob/fetch-dev/assets/architect.jpg)
-![Integration and extensions](https://github.com/tuya/tuya-connector-go/blob/fetch-dev/assets/integration%26extension.jpg)
+![Integration of the framework](https://github.com/callmegema/tuya-connector-go/blob/fetch-dev/assets/architect.jpg)
+![Integration and extensions](https://github.com/callmegema/tuya-connector-go/blob/fetch-dev/assets/integration%26extension.jpg)
 
 ### Core module design
 
-![Design description](https://github.com/tuya/tuya-connector-go/blob/fetch-dev/assets/tuya-connector-go.png)
+![Design description](https://github.com/callmegema/tuya-connector-go/blob/fetch-dev/assets/tuya-connector-go.png)
 
 ## Technical support
 
 You can get technical support from Tuya in the following services:
 
-- Help Center: https://support.tuya.com/en/help
-- Service & Support: https://service.console.tuya.com/8/2/list?source=content_feedback
+-   Help Center: https://support.tuya.com/en/help
+-   Service & Support: https://service.console.tuya.com/8/2/list?source=content_feedback
