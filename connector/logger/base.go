@@ -23,7 +23,7 @@ func init() {
 }
 
 func newLogInstance() extension.ILogger {
-	return NewDefaultLogger("tysdk", false)
+	return NewDefaultLogger("tysdk", true)
 }
 
 var Log extension.ILogger
